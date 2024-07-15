@@ -1,0 +1,4 @@
+name = "Logging"
+uuid = "b53cc463-f6e4-43d3-bdaf-b148cd6b2201"
+authors = ["Antonino D'Anna <anda982008@gmail.com>"]
+version = "0.1.0"
