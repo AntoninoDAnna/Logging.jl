@@ -1,11 +1,26 @@
-function Logging_write(fb::IOStream,x...)
-  println(fb, x...)
-  flush(fb)
+function log(log::Logfile, level::Level, text::AbstractString)
+  if log.level>=level
+    return nothing
+  end
+  println(log.file, text)
 end
 
-function Logging_write(fb::IOStream,x::Vector)
-  for i in x
-    println(fb,i)
+_log(log::Logfile,text::AbstractString) = print(log.file,text)
+
+function log(log::Logfile,level::Level, number::T<:Real)
+  if log.level>=level
+    return nothing
   end
-  flush(fb)
+  @printf(log.file, "%.12f, \n", number)
 end
+
+_log(log::Logfile,number::T<:Real) = @printf(log.file, "%.12f", number)
+
+function log(log::Logfile,level::Level,obs::uwreal)
+  if log.level>=level
+    return nothing
+  end
+  @printf(log.file, "%.12 +- %.12, \n",value(obs),Err(obs))
+end
+
+_log(log::Logfile,obs::uwreal) = @printf(log.file, "%.12 +- %.12", value(obs),Err(obs))
