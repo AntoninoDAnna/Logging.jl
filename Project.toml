@@ -2,3 +2,8 @@ name = "Logging"
 uuid = "b53cc463-f6e4-43d3-bdaf-b148cd6b2201"
 authors = ["Antonino D'Anna <anda982008@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+ADerrors = "5e92007d-7bf1-471c-8ceb-4591b8b567a9"
+BDIO = "375f315e-f2c4-11e9-2ef9-134f02f79e27"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
