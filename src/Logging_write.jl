@@ -49,7 +49,7 @@ end
 
 _logging(log::Logfile,x) = print(log.io, x)
 
-debug(log::Logfile,x...)   = logging(log,Level_debug,x...)
-info(log::Logfile,x...)    = logging(log,Level_info,x...)
-warn(log::Logfile,x...)    = logging(log,Level_warn,x...)
-error(log::Logfile,x...)   = logging(log,Level_error,x...)
+log_debug(log::Logfile,x...)   = logging(log,Level_debug,x...)
+log_info(log::Logfile,x...)    = logging(log,Level_info,x...)
+log_warn(log::Logfile,x...)    = logging(log,Level_warn,x...)
+log_error(log::Logfile,x...)   = logging(log,Level_error,x...)
