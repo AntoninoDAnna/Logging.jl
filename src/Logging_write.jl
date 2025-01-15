@@ -16,7 +16,7 @@ function logging(log::Logfile,level::Level, number::T where T<:Real)
   flush(log.io)
 end
 
-_logging(log::Logfile,number::T where T<:Real) = @printf(log.io, "%.12f", number)
+_logging(log::Logfile,number::T where T<:Real) = @printf(log.io, "%.12f ", number)
 
 function logging(log::Logfile,level::Level,obs::uwreal)
   if log.level>level
