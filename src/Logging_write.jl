@@ -26,7 +26,7 @@ function logging(log::Logfile,level::Level,obs::uwreal)
   flush(log.io)
 end
 
-_logging(log::Logfile,obs::uwreal) = @printf(log.io, "%.12f +- %.12f", value(obs),Err(obs))
+_logging(log::Logfile,obs::uwreal) = @printf(log.io, "%.12f +- %.12f ", value(obs),Err(obs))
 
 function logging(log::Logfile,level::Level, x...)
   if log.level>level
@@ -47,7 +47,39 @@ function logging(log::Logfile,level::Level,x)
   flush(log.io)
 end
 
-_logging(log::Logfile,x) = print(log.io, x)
+function logging(log::Logfile,level::Level,x::AbstractArray)
+  if log.level>level 
+    return nothing
+  end
+  ndim = ndims(x)
+  if ndim == 2
+    _logging(log::Logfile,x)
+  else
+    for n in axes(x,1)
+      print(log.io, "axes: $n ")
+      [_loggign(log,s) for s in eachslice(x,dims=1)] 
+    end
+  end  
+end
+
+function _logging(log::Logfile,x::AbstractMatrix)
+  print(log.io,'\n')
+  for i in axes(x,1)
+    for j in axes(x,2)
+      _logging(log,x[i,j])
+    end
+    print(log.io,'\n')
+  end
+end
+
+function _logging(log::Logfile,x::AbstractArray)
+  for n in axes(x,1)
+    print(log.io, "- $n ")
+    [_loggign(log,s) for s in eachslice(x,dims=1)] 
+  end
+end
+
+_logging(log::Logfile,x) = print(log.io, x, " ")
 
 log_debug(log::Logfile,x...)   = logging(log,Level_debug,x...)
 log_info(log::Logfile,x...)    = logging(log,Level_info,x...)

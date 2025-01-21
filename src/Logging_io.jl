@@ -5,6 +5,12 @@
   Level_error
 end
 
+mutable struct Format 
+  indentation::String
+  Format() = new("");
+end
+
+
 struct Logfile
   io::IOStream
   name::AbstractString
