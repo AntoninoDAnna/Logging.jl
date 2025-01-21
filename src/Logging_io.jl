@@ -8,6 +8,7 @@ end
 mutable struct Format 
   indentation::String
   Format() = new("");
+  Format(i::String) = new(s);
 end
 
 
