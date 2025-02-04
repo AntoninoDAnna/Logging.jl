@@ -4,6 +4,7 @@ function logging(log::Logfile, level::Level, text::AbstractString;format::Format
   end
   println(log.io, format.indentation, text)
   flush(log.io)
+  check(log);
 end
 
 _logging(log::Logfile,text::AbstractString;format::Format= Format()) = print(log.io,format.indentation,text)
@@ -15,6 +16,7 @@ function logging(log::Logfile,level::Level, number::T where T<:Real;format::Form
   print(log.io,format.indentation)
   @printf(log.io, "%.12f, \n", number)
   flush(log.io)
+  check(log);
 end
 
 function _logging(log::Logfile,number::T where T<:Real;format::Format= Format()) 
@@ -22,7 +24,7 @@ function _logging(log::Logfile,number::T where T<:Real;format::Format= Format())
   @printf(log.io, "%.12f ", number)
 end
 
-function logging(log::Logfile,level::Level,obs::uwreal;format::Format= Format())
+function logging(log::Logfile,level::Level,obs::ADerrors.uwreal;format::Format= Format())
   if log.level>level
     return nothing
   end
@@ -33,14 +35,15 @@ function logging(log::Logfile,level::Level,obs::uwreal;format::Format= Format())
     @printf(log.io, " %.12e +- %.12e, \n",value(obs),Err(obs))
   end 
   flush(log.io)
+  check(log);
 end
 
-function _logging(log::Logfile,obs::uwreal)
+function _logging(log::Logfile,obs::ADerrors.uwreal;format::Format= Format())
   print(log.io, format.indentation)
   if obs.mean < 0
-    @printf(log.io, "%.12e +- %.12e, \n",value(obs),Err(obs))
+    @printf(log.io, "%.12e +- %.12e, \n",obs.mean,obs.err)
   else
-    @printf(log.io, " %.12e +- %.12e, \n",value(obs),Err(obs))
+    @printf(log.io, " %.12e +- %.12e, \n",obs.mean,obs.err)
   end 
 end
 
@@ -54,6 +57,7 @@ function logging(log::Logfile,level::Level, x...;format::Format =Format())
   end
   print(log.io,'\n')
   flush(log.io)
+  check(log);
 end
 
 function logging(log::Logfile,level::Level,x;format::Format =Format())
@@ -63,6 +67,7 @@ function logging(log::Logfile,level::Level,x;format::Format =Format())
   print(log.io,format.indentation)
   println(log.io,x)
   flush(log.io)
+  check(log);
 end
 
 function logging(log::Logfile,level::Level,x::AbstractArray;format::Format =Format())
@@ -99,7 +104,9 @@ end
 
 _logging(log::Logfile,x) = print(log.io, x, " ")
 
-log_debug(log::Logfile,x...;format=Format())   = logging(log,Level_debug,x...;format=format)
-log_info(log::Logfile,x...;format=Format())    = logging(log,Level_info,x...;format=format)
-log_warn(log::Logfile,x...;format=Format())    = logging(log,Level_warn,x...;format=format)
-log_error(log::Logfile,x...;format=Format())   = logging(log,Level_error,x...;format=format)
+logging(x::Nothing,y...;k...) = nothing
+
+log_debug(log,x...;format=Format())   = logging(log,Level_debug,x...;format=format)
+log_info( log,x...;format=Format())    = logging(log,Level_info,x...;format=format)
+log_warn( log,x...;format=Format())    = logging(log,Level_warn,x...;format=format)
+log_error(log,x...;format=Format())   = logging(log,Level_error,x...;format=format)
