@@ -2,6 +2,7 @@ module Logging
 
 using Printf
 import ADerrors
+import Base: print
 
 include("Logging_io.jl")
 include("Logging_write.jl")

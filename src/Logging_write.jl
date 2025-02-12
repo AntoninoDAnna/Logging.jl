@@ -41,9 +41,9 @@ end
 function _logging(log::Logfile,obs::ADerrors.uwreal;format::Format= Format())
   print(log.io, format.indentation)
   if obs.mean < 0
-    @printf(log.io, "%.12e +- %.12e, \n",obs.mean,obs.err)
+    @printf(log.io, "%.12e +- %.12e, ",obs.mean,obs.err)
   else
-    @printf(log.io, " %.12e +- %.12e, \n",obs.mean,obs.err)
+    @printf(log.io, " %.12e +- %.12e, ",obs.mean,obs.err)
   end 
 end
 
@@ -80,7 +80,7 @@ function logging(log::Logfile,level::Level,x::AbstractArray;format::Format =Form
   else
     for n in axes(x,1)
       print(log.io, "axes: $n ")
-      [_loggign(log,s;format = Format(format.indentation*'\t')) for s in eachslice(x,dims=1)] 
+      [_logging(log,s;format = Format(format.indentation*'\t')) for s in eachslice(x,dims=1)] 
     end
   end  
 end
@@ -95,18 +95,22 @@ function _logging(log::Logfile,x::AbstractMatrix;format::Format =Format())
   end
 end
 
-function _logging(log::Logfile,x::AbstractArray;format::Format=Format())
-  for n in axes(x,1)
-    print(log.io, "- $n ")
-    [_loggign(log,s,format=format) for s in eachslice(x,dims=1)] 
-  end
-end
+# function _logging(log::Logfile,x::AbstractArray;format::Format=Format())
+#   for n in axes(x,1)
+#     print(log.io, "- $n ")
+#     [_logging(log,s,format=format) for s in eachslice(x,dims=1)] 
+#   end
+# end
 
 _logging(log::Logfile,x) = print(log.io, x, " ")
 
 logging(x::Nothing,y...;k...) = nothing
 
 log_debug(log,x...;format=Format())   = logging(log,Level_debug,x...;format=format)
-log_info( log,x...;format=Format())    = logging(log,Level_info,x...;format=format)
-log_warn( log,x...;format=Format())    = logging(log,Level_warn,x...;format=format)
+log_info( log,x...;format=Format())   = logging(log,Level_info,x...;format=format)
+log_warn( log,x...;format=Format())   = logging(log,Level_warn,x...;format=format)
 log_error(log,x...;format=Format())   = logging(log,Level_error,x...;format=format)
+
+Base.println(log::Logfile, x...) = logging(log,Level_debug,x...)
+Base.print(log::Logfile, x...)   = logging(log,Level_debug,x...)
+Base.show(io::Core.IO,log::Logfile)= println(io,"log file in",path(log))
