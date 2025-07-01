@@ -14,14 +14,14 @@ function logging(log::Logfile,level::Level, number::T where T<:Real;format::Form
     return nothing
   end
   print(log.io,format.indentation)
-  @printf(log.io, "%.12f, \n", number)
+  @printf(log.io, "%.12e, \n", number)
   flush(log.io)
   check(log);
 end
 
 function _logging(log::Logfile,number::T where T<:Real;format::Format= Format()) 
   print(log.io, format.indentation)
-  @printf(log.io, "%.12f ", number)
+  @printf(log.io, "%.12e ", number)
 end
 
 function logging(log::Logfile,level::Level,obs::ADerrors.uwreal;format::Format= Format())
